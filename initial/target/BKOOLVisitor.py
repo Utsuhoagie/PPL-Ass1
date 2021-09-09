@@ -14,5 +14,50 @@ class BKOOLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by BKOOLParser#classDeclList.
+    def visitClassDeclList(self, ctx:BKOOLParser.ClassDeclListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#classDecl.
+    def visitClassDecl(self, ctx:BKOOLParser.ClassDeclContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#memberList.
+    def visitMemberList(self, ctx:BKOOLParser.MemberListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#member.
+    def visitMember(self, ctx:BKOOLParser.MemberContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#keyword.
+    def visitKeyword(self, ctx:BKOOLParser.KeywordContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#attribute.
+    def visitAttribute(self, ctx:BKOOLParser.AttributeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#attrType.
+    def visitAttrType(self, ctx:BKOOLParser.AttrTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#attrNameList.
+    def visitAttrNameList(self, ctx:BKOOLParser.AttrNameListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#method.
+    def visitMethod(self, ctx:BKOOLParser.MethodContext):
+        return self.visitChildren(ctx)
+
+
 
 del BKOOLParser

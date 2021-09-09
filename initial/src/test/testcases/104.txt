@@ -1,1 +1,1 @@
-string a := "th	ing";
+string a := "t	hing";
