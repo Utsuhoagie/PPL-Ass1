@@ -85,6 +85,7 @@ class TestParser:
         lexer = Lexer(inputfile)
         listener = TestParser.createErrorListener()
         tokens = CommonTokenStream(lexer)
+        print(tokens.getText(0,3))
         parser = Parser(tokens)
         parser.removeErrorListeners()
         parser.addErrorListener(listener)

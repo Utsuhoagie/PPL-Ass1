@@ -27,7 +27,8 @@ options{
 // ---- PARSER -----------------------------------
 
 // --- [1] Structure -----------------------------
-program         : classDeclList EOF ;
+program         : CLASS EOF;
+//program         : classDeclList EOF ;
 classDeclList   : classDecl classDeclList
                 | classDecl;
 classDecl       : CLASS ID EXTENDS ID LB memberList RB
@@ -66,23 +67,108 @@ IDList          : ID COMMA IDList
 */              
     
 // --- [2] Expressions -------------------------
-exp     : exp1 (LESS | GREATER | LEQ | GREQ) exp1
-        | exp1;
-exp1    : exp2 (EQ | NEQ) exp2
-        | exp2;
-exp2    : exp2 (AND | OR) exp3
-        | exp3;
-exp3    : exp3 (ADD | SUB) exp4
-        | exp4;
-exp4    : exp4 (MUL | DIV | DIVF | MOD) exp5
-        | exp5;
-exp5    : exp5 CONCAT exp6
-        | exp6;
-exp6    : NOT exp6
-        | exp7;
-exp7    : (ADD | SUB) exp7
-        | exp8;
-exp8    : ;
+// exp     : exp1 (LESS | GREATER | LEQ | GREQ) exp1
+//         | exp1;
+// exp1    : exp2 (EQ | NEQ) exp2
+//         | exp2;
+// exp2    : exp2 (AND | OR) exp3
+//         | exp3;
+// exp3    : exp3 (ADD | SUB) exp4
+//         | exp4;
+// exp4    : exp4 (MUL | DIV | DIVF | MOD) exp5
+//         | exp5;
+// exp5    : exp5 CONCAT exp6
+//         | exp6;
+// exp6    : NOT exp6
+//         | exp7;
+// exp7    : (ADD | SUB) exp7
+//         | exp8;
+// exp8: exp9;
+// exp9: exp10;
+// // exp8    : index_op
+// //         | exp9;
+// // exp9    : memAccess
+// //         | exp10;
+// exp10   : LB exp RB
+//         | INTLIT | FLOATLIT | BOOLLIT | STRINGLIT | ARRAYLIT
+//         | ID;
+
+exp         : LB exp RB | INTLIT | FLOATLIT | BOOLLIT | STRINGLIT | ARRAYLIT | ID       // highest priority
+
+            | exp DOT ID                // instance_attr_access
+            | static_attr_access
+            | exp DOT ID LB argList RB  // instance_method_invoke
+            | exp DOT ID LB RB          // instance_method_invoke
+            | static_method_invoke
+
+            | exp LQ exp RQ             // index_op
+            | (ADD | SUB) exp
+            | NOT exp
+            | exp CONCAT exp
+            | exp (MUL | DIV | DIVF | MOD) exp
+            | exp (ADD | SUB) exp
+            | exp (AND | OR) exp
+            | exp (EQ | NEQ) exp
+            | exp (LESS | GREATER | LEQ | GREQ) exp;
+
+// index_op    : exp LQ exp RQ;
+
+memAccess               : exp DOT ID                // instance_attr_access
+                        | static_attr_access
+                        | exp DOT ID LB argList RB  // instance_method_invoke
+                        | exp DOT ID LB RB         // instance_method_invoke
+                        | static_method_invoke;
+// instance_attr_access    : exp DOT ID;
+static_attr_access      : ID DOT ID;
+//instance_method_invoke  : exp DOT ID LB argList RB
+//                        | exp DOT ID LB RB;
+static_method_invoke    : ID DOT ID LB argList RB
+                        | ID DOT ID LB RB;
+argList                 : exp COMMA argList
+                        | exp;
+
+        
+
+// --- [3] Statements ------------------------
+
+stmtList    : stmt stmtList
+            | stmt;
+stmt        : blockStmt                 // each stmt's subrule has its own SEMI or other ending tokens
+            | assignStmt
+            | ifStmt
+            | forStmt
+            | breakStmt
+            | continueStmt
+            | returnStmt
+            | methodInvokeStmt;
+
+
+blockStmt   : LP blockBody RP;
+blockBody   : declList stmtList
+            | declList
+            | stmtList;
+declList    : decl declList
+            | decl;
+decl        : FINAL? attrType attrList SEMI;
+
+assignStmt  : lhs ASSIGN exp SEMI;
+lhs         : ;
+
+ifStmt      : IF exp THEN stmt ELSE stmt
+            | IF exp THEN stmt;
+
+forStmt     : scalarVar ASSIGN exp (TO | DOWNTO) exp DO stmt;
+scalarVar   : ID
+            | exp DOT ID | ID DOT ID
+            | exp LQ exp RQ;
+
+breakStmt   : BREAK SEMI;
+continueStmt: CONTINUE SEMI;
+
+returnStmt  : RETURN exp SEMI;
+
+methodInvokeStmt: CLASS CLASS;
+
 
 /*
 
@@ -228,8 +314,8 @@ exp8    : ;
 		decl: FINAL? attribute SEMI;
 		
 			# reminder
-			
-			attribute: type attrNameList;
+			agwetevtw5t2!!!!!!!!!
+			attribute: attrNameList;
 			type: INT | FLOAT | BOOL | STRING;
 			attrNameList: attrName COMMA attrNameList
 						| attrName;
@@ -390,7 +476,9 @@ exp8    : ;
     fragment CHARS: (~["\n] | ESCAPE | '\\"');      // in a string, \ can only appear as \\
 
 
-    STRINGLIT: '"' CHARS* '"';
+    STRINGLIT: '"' CHARS* '"'{
+        self.text = (str(self.text))[1:-1]
+    };
 	/*	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			fragment ESC_SEQ:
 			STRINGLIT:

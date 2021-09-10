@@ -34,13 +34,8 @@ class BKOOLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by BKOOLParser#keyword.
-    def visitKeyword(self, ctx:BKOOLParser.KeywordContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by BKOOLParser#attribute.
-    def visitAttribute(self, ctx:BKOOLParser.AttributeContext):
+    # Visit a parse tree produced by BKOOLParser#attrKeyword.
+    def visitAttrKeyword(self, ctx:BKOOLParser.AttrKeywordContext):
         return self.visitChildren(ctx)
 
 
@@ -49,13 +44,133 @@ class BKOOLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by BKOOLParser#attrNameList.
-    def visitAttrNameList(self, ctx:BKOOLParser.AttrNameListContext):
+    # Visit a parse tree produced by BKOOLParser#attrList.
+    def visitAttrList(self, ctx:BKOOLParser.AttrListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#attribute.
+    def visitAttribute(self, ctx:BKOOLParser.AttributeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#returnType.
+    def visitReturnType(self, ctx:BKOOLParser.ReturnTypeContext):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by BKOOLParser#method.
     def visitMethod(self, ctx:BKOOLParser.MethodContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#paramList.
+    def visitParamList(self, ctx:BKOOLParser.ParamListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#param.
+    def visitParam(self, ctx:BKOOLParser.ParamContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#exp.
+    def visitExp(self, ctx:BKOOLParser.ExpContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#memAccess.
+    def visitMemAccess(self, ctx:BKOOLParser.MemAccessContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#static_attr_access.
+    def visitStatic_attr_access(self, ctx:BKOOLParser.Static_attr_accessContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#static_method_invoke.
+    def visitStatic_method_invoke(self, ctx:BKOOLParser.Static_method_invokeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#argList.
+    def visitArgList(self, ctx:BKOOLParser.ArgListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#stmtList.
+    def visitStmtList(self, ctx:BKOOLParser.StmtListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#stmt.
+    def visitStmt(self, ctx:BKOOLParser.StmtContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#blockStmt.
+    def visitBlockStmt(self, ctx:BKOOLParser.BlockStmtContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#blockBody.
+    def visitBlockBody(self, ctx:BKOOLParser.BlockBodyContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#declList.
+    def visitDeclList(self, ctx:BKOOLParser.DeclListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#decl.
+    def visitDecl(self, ctx:BKOOLParser.DeclContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#assignStmt.
+    def visitAssignStmt(self, ctx:BKOOLParser.AssignStmtContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#lhs.
+    def visitLhs(self, ctx:BKOOLParser.LhsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#ifStmt.
+    def visitIfStmt(self, ctx:BKOOLParser.IfStmtContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#forStmt.
+    def visitForStmt(self, ctx:BKOOLParser.ForStmtContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#scalarVar.
+    def visitScalarVar(self, ctx:BKOOLParser.ScalarVarContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#breakStmt.
+    def visitBreakStmt(self, ctx:BKOOLParser.BreakStmtContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#continueStmt.
+    def visitContinueStmt(self, ctx:BKOOLParser.ContinueStmtContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#returnStmt.
+    def visitReturnStmt(self, ctx:BKOOLParser.ReturnStmtContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#methodInvokeStmt.
+    def visitMethodInvokeStmt(self, ctx:BKOOLParser.MethodInvokeStmtContext):
         return self.visitChildren(ctx)
 
 

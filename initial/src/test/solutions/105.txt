@@ -1,1 +1,1 @@
-"some\"thing",<EOF>
+some\"thing,<EOF>

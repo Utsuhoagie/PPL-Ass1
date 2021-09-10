@@ -15,12 +15,12 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test("ab~svn","ab,Error Token ~",103))
 
     def test_string(self):
-        self.assertTrue(TestLexer.test("""string a := "t\thing";""", """string,a,:=,"t\thing",;,<EOF>""", 104))
+        self.assertTrue(TestLexer.test("""string a := "t\thing";""", """string,a,:=,t\thing,;,<EOF>""", 104))
 
     def test_dubQuotesString(self):
         # \" -> \\"
         # because in a string, \ can only show as \\
-        self.assertTrue(TestLexer.test(""" "some\\"thing" """,""""some\\"thing",<EOF>""",105))
+        self.assertTrue(TestLexer.test(""" "some\\"thing" ""","""some\\"thing,<EOF>""",105))
 
     def test_class(self):
         self.assertTrue(TestLexer.test("""class abc {}""","class,abc,{,},<EOF>", 106))
@@ -44,12 +44,14 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test(""" "abc""","""Unclosed String: abc""", 112))
 
     def test_illegalEscapedString(self):
-        self.assertTrue(TestLexer.test(""" "s\z" ""","""Illegal Escape In String: s""",113))
+        self.assertTrue(TestLexer.test(""" "sss\z" ""","""Illegal Escape In String: sss""",113))
         # WRONG!!!!!!!!!
 
     def test_ArrayLit(self):
         self.assertTrue(TestLexer.test("{1,5}","{1,5},<EOF>",114))
 
+    def test_class2(self):
+        self.assertTrue(TestLexer.test("class A {}", "class,A,{,},<EOF>",115))
     # def test_integer(self):
     #     """test integers"""
     #     self.assertTrue(TestLexer.test("Var x;","Var,x,;,<EOF>",104))
