@@ -12,6 +12,28 @@ GENERATE_DIR = 'main/bkool/parser'
 def main(argv):
     if len(argv) < 1:
         printUsage()
+    elif argv[0] == "genLex":
+        subprocess.run(["java","-jar",ANTLR_JAR,"-o","../target","-no-listener","-visitor","main/bkool/parser/BKOOL.g4"])
+
+        if not os.path.isdir(TARGET_DIR + "/" + GENERATE_DIR):
+            subprocess.run(["java","-jar",ANTLR_JAR,"-o",GENERATE_DIR,"-no-listener","-visitor","main/bkool/parser/BKOOL.g4"])
+        if not (TARGET_DIR + "/" + GENERATE_DIR) in sys.path:
+            sys.path.append(TARGET_DIR + "/" + GENERATE_DIR)
+
+        from LexerSuite import LexerSuite
+        getAndTest(LexerSuite)
+
+    elif argv[0] == "genPar":
+        subprocess.run(["java","-jar",ANTLR_JAR,"-o","../target","-no-listener","-visitor","main/bkool/parser/BKOOL.g4"])
+
+        if not os.path.isdir(TARGET_DIR + "/" + GENERATE_DIR):
+            subprocess.run(["java","-jar",ANTLR_JAR,"-o",GENERATE_DIR,"-no-listener","-visitor","main/bkool/parser/BKOOL.g4"])
+        if not (TARGET_DIR + "/" + GENERATE_DIR) in sys.path:
+            sys.path.append(TARGET_DIR + "/" + GENERATE_DIR)
+
+        from ParserSuite import ParserSuite
+        getAndTest(ParserSuite)
+
     elif argv[0] == 'gen':
         subprocess.run(["java","-jar",ANTLR_JAR,"-o","../target","-no-listener","-visitor","main/bkool/parser/BKOOL.g4"])
     elif argv[0] == 'clean':

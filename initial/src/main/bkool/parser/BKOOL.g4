@@ -27,14 +27,14 @@ options{
 // ---- PARSER -----------------------------------
 
 // --- [1] Structure -----------------------------
-program         : CLASS EOF;
-//program         : classDeclList EOF ;
+program         : classDeclList EOF;
+//program         : classDecl+ EOF;
 classDeclList   : classDecl classDeclList
                 | classDecl;
-classDecl       : CLASS ID EXTENDS ID LB memberList RB
-                | CLASS ID LB memberList RB
-                | CLASS ID EXTENDS ID LB RB
-                | CLASS ID LB RB;
+classDecl       : CLASS ID EXTENDS ID LP memberList RP
+                | CLASS ID LP memberList RP
+                | CLASS ID EXTENDS ID LP RP
+                | CLASS ID LP RP;
 
 memberList      : member memberList
                 | member;
@@ -48,7 +48,7 @@ attrKeyword     : STATIC FINAL | FINAL STATIC | STATIC | FINAL;
 attrType        : INT | FLOAT | BOOLEAN | STRING;
 attrList        : attribute COMMA attrList
                 | attribute;
-attribute       : ID ASSIGN exp
+attribute       : ID INIT exp
                 | ID;
 
 returnType      : INT | FLOAT | BOOLEAN | STRING | VOID;
@@ -56,8 +56,8 @@ method          : ID LB paramList RB blockStmt
                 | ID LB RB blockStmt;
 paramList       : param SEMI paramList
                 | param;
-param           : attrType IDList;
-IDList          : ID COMMA IDList
+param           : attrType idList;
+idList          : ID COMMA idList
                 | ID;
 /*
 		Special instance method: constructor method
@@ -96,12 +96,14 @@ IDList          : ID COMMA IDList
 exp         : LB exp RB | INTLIT | FLOATLIT | BOOLLIT | STRINGLIT | ARRAYLIT | ID       // highest priority
 
             | exp DOT ID                // instance_attr_access
-            | static_attr_access
+            | ID DOT ID                 // static_attr_access
             | exp DOT ID LB argList RB  // instance_method_invoke
             | exp DOT ID LB RB          // instance_method_invoke
-            | static_method_invoke
+            | ID DOT ID LB argList RB   // static_method_invoke
+            | ID DOT ID LB RB           // static_method_invoke
 
             | exp LQ exp RQ             // index_op
+
             | (ADD | SUB) exp
             | NOT exp
             | exp CONCAT exp
@@ -114,16 +116,17 @@ exp         : LB exp RB | INTLIT | FLOATLIT | BOOLLIT | STRINGLIT | ARRAYLIT | I
 // index_op    : exp LQ exp RQ;
 
 memAccess               : exp DOT ID                // instance_attr_access
-                        | static_attr_access
+                        | ID DOT ID                 // static_attr_access
                         | exp DOT ID LB argList RB  // instance_method_invoke
-                        | exp DOT ID LB RB         // instance_method_invoke
-                        | static_method_invoke;
+                        | exp DOT ID LB RB          // instance_method_invoke
+                        | ID DOT ID LB argList RB   // static_method_invoke
+                        | ID DOT ID LB RB;          // static_method_invoke
 // instance_attr_access    : exp DOT ID;
-static_attr_access      : ID DOT ID;
-//instance_method_invoke  : exp DOT ID LB argList RB
-//                        | exp DOT ID LB RB;
-static_method_invoke    : ID DOT ID LB argList RB
-                        | ID DOT ID LB RB;
+// static_attr_access      : ID DOT ID;
+// instance_method_invoke  : exp DOT ID LB argList RB
+//                         | exp DOT ID LB RB;
+// static_method_invoke    : ID DOT ID LB argList RB
+//                         | ID DOT ID LB RB;
 argList                 : exp COMMA argList
                         | exp;
 
@@ -152,7 +155,10 @@ declList    : decl declList
 decl        : FINAL? attrType attrList SEMI;
 
 assignStmt  : lhs ASSIGN exp SEMI;
-lhs         : ;
+lhs         : ID
+            | exp DOT ID                // instance_attr_access
+            | ID DOT ID                 // static_attr_access
+            | exp LQ exp RQ;
 
 ifStmt      : IF exp THEN stmt ELSE stmt
             | IF exp THEN stmt;
@@ -388,10 +394,6 @@ methodInvokeStmt: CLASS CLASS;
     BLOCK_CMT: '/*' .*? '*/' -> skip;
     LINE_CMT: '#' .*? ('\n' | EOF) -> skip;
 
-// ------ Identifier ------
-    ID: (CHAR | UNDERSCORE) (CHAR | DIGIT | UNDERSCORE)*;
-    fragment UNDERSCORE: '_';
-	
 // ------ Keywords ------
     BOOLEAN: 'boolean';
     BREAK: 'break';
@@ -417,7 +419,11 @@ methodInvokeStmt: CLASS CLASS;
     STATIC: 'static';
     TO: 'to';
     DOWNTO: 'downto';
-	
+
+// ------ Identifier ------
+    ID: (CHAR | UNDERSCORE) (CHAR | DIGIT | UNDERSCORE)*;
+    fragment UNDERSCORE: '_';
+
 // ------ Operators ------
     ADD: '+';
     SUB: '-';
@@ -438,6 +444,7 @@ methodInvokeStmt: CLASS CLASS;
     // object creation: 'new'
 
     ASSIGN: ':=';
+    INIT: '=';
 	
 // ------ Separators ------
     LP: '{';

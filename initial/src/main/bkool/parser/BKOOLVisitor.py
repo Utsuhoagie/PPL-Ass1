@@ -74,6 +74,11 @@ class BKOOLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by BKOOLParser#idList.
+    def visitIdList(self, ctx:BKOOLParser.IdListContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by BKOOLParser#exp.
     def visitExp(self, ctx:BKOOLParser.ExpContext):
         return self.visitChildren(ctx)
@@ -81,16 +86,6 @@ class BKOOLVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by BKOOLParser#memAccess.
     def visitMemAccess(self, ctx:BKOOLParser.MemAccessContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by BKOOLParser#static_attr_access.
-    def visitStatic_attr_access(self, ctx:BKOOLParser.Static_attr_accessContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by BKOOLParser#static_method_invoke.
-    def visitStatic_method_invoke(self, ctx:BKOOLParser.Static_method_invokeContext):
         return self.visitChildren(ctx)
 
 

@@ -1,1 +1,9 @@
-int main( {}
+
+            class A {
+
+            }
+
+            class B {
+
+            }
+        

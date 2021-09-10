@@ -1,0 +1,5 @@
+
+            class Dog extends Animal {
+                static int count = 0;
+            }
+        
