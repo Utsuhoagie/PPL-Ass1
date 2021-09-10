@@ -43,7 +43,8 @@ member          : attrKeyword attrType attrList SEMI
                 | returnType method;
 
 attrKeyword     : STATIC FINAL | FINAL STATIC | STATIC | FINAL;
-attrType        : INT | FLOAT | BOOLEAN | STRING;
+attrType        : INT | FLOAT | BOOLEAN | STRING | arrayType;
+arrayType       : (INT | FLOAT | BOOLEAN | STRING) LQ INTLIT RQ;
 attrList        : attribute COMMA attrList
                 | attribute;
 attribute       : ID INIT exp
@@ -62,12 +63,13 @@ idList          : ID COMMA idList
 
 exp         : LB exp RB | INTLIT | FLOATLIT | BOOLLIT | STRINGLIT | ARRAYLIT | THIS | ID    // highest priority
 
-            | exp DOT ID                // instance_attr_access
-            | ID DOT ID                 // static_attr_access
             | exp DOT ID LB argList RB  // instance_method_invoke
             | exp DOT ID LB RB          // instance_method_invoke
             | ID DOT ID LB argList RB   // static_method_invoke
             | ID DOT ID LB RB           // static_method_invoke
+            | exp DOT ID                // instance_attr_access
+            | ID DOT ID                 // static_attr_access
+
 
             | exp LQ exp RQ             // index_op
 
@@ -102,7 +104,8 @@ stmt        : blockStmt                 // each stmt's subrule has its own SEMI 
             | methodInvokeStmt;
 
 
-blockStmt   : LP blockBody RP;
+blockStmt   : LP blockBody RP
+            | LP RP;
 blockBody   : declList stmtList
             | declList
             | stmtList;
@@ -128,7 +131,8 @@ scalarVar   : ID
 breakStmt   : BREAK SEMI;
 continueStmt: CONTINUE SEMI;
 
-returnStmt  : RETURN exp SEMI;
+returnStmt  : RETURN exp SEMI
+            | RETURN SEMI;
 
 methodInvokeStmt: exp DOT ID LB argList RB SEMI // instance_method_invoke
                 | exp DOT ID LB RB SEMI         // instance_method_invoke
@@ -148,6 +152,49 @@ methodInvokeStmt: exp DOT ID LB argList RB SEMI // instance_method_invoke
 // ------ Comments -------
     BLOCK_CMT: '/*' .*? '*/' -> skip;
     LINE_CMT: '#' .*? ('\n' | EOF) -> skip;
+
+
+	
+// ------ Literal ------
+// Source representation of an int/float/bool/string value
+		
+	// Int literal
+	INTLIT: DIGIT+;
+
+	// Float literal
+	FLOATLIT: DIGIT+ FLOAT_END;
+	fragment FLOAT_END: DECPART EXPPART
+					  | DECPART
+					  | EXPPART;
+					  
+	fragment DECPART: DOT DIGIT*;
+	fragment EXPPART: [Ee] SIGN? DIGIT+;
+	fragment SIGN: [+-];
+			
+	// Bool literal
+	BOOLLIT: TRUE | FALSE;
+			
+	// String literal
+    fragment ESCAPE: [\b\f\r\t\\];
+    fragment ILLEGAL_ESC:   '\\' ~[bfrt"\\];
+    fragment CHARS: (~["\n] | ESCAPE | '\\"');      // in a string, \ can only appear as \\
+
+
+    STRINGLIT: '"' CHARS* '"'{
+        self.text = (str(self.text))[1:-1]
+    };
+	/*	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			fragment ESC_SEQ:
+			STRINGLIT:
+    */
+			
+	// Array literal
+	ARRAYLIT: LP LITERAL LITLIST RP
+            | LP LITERAL RP;
+	LITLIST : COMMA LITERAL LITLIST
+            | COMMA LITERAL;
+			
+	fragment LITERAL: INTLIT | FLOATLIT | BOOLLIT | STRINGLIT;
 
 // ------ Keywords ------
     BOOLEAN: 'boolean';
@@ -200,7 +247,7 @@ methodInvokeStmt: exp DOT ID LB argList RB SEMI // instance_method_invoke
 
     ASSIGN: ':=';
     INIT: '=';
-	
+
 // ------ Separators ------
     LP: '{';
 	RP: '}';
@@ -212,49 +259,6 @@ methodInvokeStmt: exp DOT ID LB argList RB SEMI // instance_method_invoke
 	COLON: ':';
 	DOT: '.';
 	COMMA: ',';
-	
-// ------ Literal ------
-// Source representation of an int/float/bool/string value
-		
-	// Int literal
-	INTLIT: DIGIT+;
-
-	// Float literal
-	FLOATLIT: DIGIT+ FLOAT_END;
-	fragment FLOAT_END: DECPART EXPPART
-					  | DECPART
-					  | EXPPART;
-					  
-	fragment DECPART: DOT DIGIT*;
-	fragment EXPPART: [Ee] SIGN? DIGIT+;
-	fragment SIGN: [+-];
-			
-	// Bool literal
-	BOOLLIT: (TRUE | FALSE);
-			
-	// String literal
-    fragment ESCAPE: [\b\f\r\t\\];
-    fragment ILLEGAL_ESC:   '\\' ~[bfrt"\\];
-    fragment CHARS: (~["\n] | ESCAPE | '\\"');      // in a string, \ can only appear as \\
-
-
-    STRINGLIT: '"' CHARS* '"'{
-        self.text = (str(self.text))[1:-1]
-    };
-	/*	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			fragment ESC_SEQ:
-			STRINGLIT:
-    */
-			
-	// Array literal
-	ARRAYLIT: LP LITERAL LITLIST RP
-            | LP LITERAL RP;
-	LITLIST : COMMA LITERAL LITLIST
-            | COMMA LITERAL;
-			
-	fragment LITERAL: INTLIT | FLOATLIT | BOOLLIT | STRINGLIT;
-
-
 
 // ------ Errors ------
 // ERROR_CHAR: .;

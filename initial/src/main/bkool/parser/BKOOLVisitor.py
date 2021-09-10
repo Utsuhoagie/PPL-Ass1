@@ -44,6 +44,11 @@ class BKOOLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by BKOOLParser#arrayType.
+    def visitArrayType(self, ctx:BKOOLParser.ArrayTypeContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by BKOOLParser#attrList.
     def visitAttrList(self, ctx:BKOOLParser.AttrListContext):
         return self.visitChildren(ctx)
