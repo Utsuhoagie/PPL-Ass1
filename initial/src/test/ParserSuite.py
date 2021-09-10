@@ -127,8 +127,9 @@ class ParserSuite(unittest.TestCase):
         expect = "successful"
         self.assertTrue(TestParser.test(input,expect,209))
     
-    # def test_wrong_miss_close(self):
-    #     """Miss ) int main( {}"""
-    #     input = """int main( {}"""
-    #     expect = "Error on line 1 col 10: {"
-    #     self.assertTrue(TestParser.test(input,expect,203))
+    def test_wrongClassClose(self):
+        
+        input = """class A {)"""
+        expect = "Error on line 1 col 9: )"
+        # line starts at 1, col starts at 0
+        self.assertTrue(TestParser.test(input,expect,210))

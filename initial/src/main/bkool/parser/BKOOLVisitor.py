@@ -84,11 +84,6 @@ class BKOOLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by BKOOLParser#memAccess.
-    def visitMemAccess(self, ctx:BKOOLParser.MemAccessContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by BKOOLParser#argList.
     def visitArgList(self, ctx:BKOOLParser.ArgListContext):
         return self.visitChildren(ctx)
