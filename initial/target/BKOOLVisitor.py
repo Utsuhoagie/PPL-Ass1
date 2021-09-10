@@ -94,6 +94,11 @@ class BKOOLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by BKOOLParser#obj_create.
+    def visitObj_create(self, ctx:BKOOLParser.Obj_createContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by BKOOLParser#stmtList.
     def visitStmtList(self, ctx:BKOOLParser.StmtListContext):
         return self.visitChildren(ctx)

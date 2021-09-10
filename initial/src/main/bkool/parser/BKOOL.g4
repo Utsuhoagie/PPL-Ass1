@@ -40,8 +40,8 @@ memberList      : member memberList
                 | member;
 member          : attrKeyword attrType attrList SEMI
                 | attrType attrList SEMI
-                | STATIC returnType method SEMI
-                | returnType method SEMI;
+                | STATIC returnType method
+                | returnType method;
 
 // attribute declare: <keyword> <type> (<ID> <ASSIGN> <exp>, <ID> <ASSIGN> <exp>, <ID>,...)
 attrKeyword     : STATIC FINAL | FINAL STATIC | STATIC | FINAL;
@@ -93,7 +93,7 @@ idList          : ID COMMA idList
 //         | INTLIT | FLOATLIT | BOOLLIT | STRINGLIT | ARRAYLIT
 //         | ID;
 
-exp         : LB exp RB | INTLIT | FLOATLIT | BOOLLIT | STRINGLIT | ARRAYLIT | ID       // highest priority
+exp         : LB exp RB | INTLIT | FLOATLIT | BOOLLIT | STRINGLIT | ARRAYLIT | THIS | ID    // highest priority
 
             | exp DOT ID                // instance_attr_access
             | ID DOT ID                 // static_attr_access
@@ -130,7 +130,9 @@ memAccess               : exp DOT ID                // instance_attr_access
 argList                 : exp COMMA argList
                         | exp;
 
-        
+
+obj_create: NEW ID LB argList RB
+          | NEW ID LB RB;
 
 // --- [3] Statements ------------------------
 
@@ -146,7 +148,8 @@ stmt        : blockStmt                 // each stmt's subrule has its own SEMI 
             | methodInvokeStmt;
 
 
-blockStmt   : LP blockBody RP;
+blockStmt   : LP blockBody RP
+            | LP RP;
 blockBody   : declList stmtList
             | declList
             | stmtList;
@@ -163,7 +166,7 @@ lhs         : ID
 ifStmt      : IF exp THEN stmt ELSE stmt
             | IF exp THEN stmt;
 
-forStmt     : scalarVar ASSIGN exp (TO | DOWNTO) exp DO stmt;
+forStmt     : FOR scalarVar ASSIGN exp (TO | DOWNTO) exp DO stmt;
 scalarVar   : ID
             | exp DOT ID | ID DOT ID
             | exp LQ exp RQ;
@@ -173,7 +176,10 @@ continueStmt: CONTINUE SEMI;
 
 returnStmt  : RETURN exp SEMI;
 
-methodInvokeStmt: CLASS CLASS;
+methodInvokeStmt: exp DOT ID LB argList RB SEMI // instance_method_invoke
+                | exp DOT ID LB RB SEMI         // instance_method_invoke
+                | ID DOT ID LB argList RB SEMI  // static_method_invoke
+                | ID DOT ID LB RB SEMI;          // static_method_invoke
 
 
 /*

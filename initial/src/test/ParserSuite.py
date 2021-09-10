@@ -52,23 +52,80 @@ class ParserSuite(unittest.TestCase):
         expect = "successful"
         self.assertTrue(TestParser.test(input, expect, 205))
 
-    def test_fullClass_program(self):
+    def test_classMem_program(self):
 
         input = """
             class Dog extends Animal {
                 static int count = 0;
+
+                void foo() {
+                    this.count := 5;
+                }
             }
         """
         expect = "successful"
         self.assertTrue(TestParser.test(input, expect, 206))
 
-    # def test_more_complex_program(self):
-    #     """More complex program"""
-    #     input = """int main () {
-    #         putIntLn(4);
-    #     }"""
-    #     expect = "successful"
-    #     self.assertTrue(TestParser.test(input,expect,202))
+    def test_bigClass_program(self):
+
+        input = """
+            class Dog extends Animal {
+                static int count = 0;
+                int age;
+                float height, weight;
+
+                void addNew(int age; float height, weight) {
+                    this.count := this.count + 1;
+                    this.age := age;
+                    this.height := height;
+                    this.weight := weight;
+                }
+
+                int getCount() {
+                    return this.count;
+                }
+            }
+        """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 207))
+
+    def test_2classes_program(self):
+
+        input = """
+            class Dog extends Animal {
+                static int count = 0;
+
+                int getCount() {
+                    return this.count;
+                }
+            }
+
+            class Person {
+                int countDogs() {
+                    return Dog.getCount();
+                }
+            }
+        """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 208))
+
+    def test_more_complex_program(self):
+        """More complex program"""
+        input = """
+        class A {
+            void foo() {
+                int i, j = 0;
+                for i := 0 to 5 do {
+                    j := j + 2;
+                    if j == 6 then
+                        break;
+                    else continue;
+                }
+            }
+        }
+        """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input,expect,209))
     
     # def test_wrong_miss_close(self):
     #     """Miss ) int main( {}"""
