@@ -133,3 +133,49 @@ class ParserSuite(unittest.TestCase):
         expect = "Error on line 1 col 9: )"
         # line starts at 1, col starts at 0
         self.assertTrue(TestParser.test(input,expect,210))
+
+    def test_expression(self):
+
+        input = """
+            class A extends B {
+                int[5] foo;
+                static int bar() {
+                    return this.foo[B.bar()] + 5;
+                }
+            }
+        """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input,expect,211))
+
+    def test_expressionAW1(self):
+
+        input = """
+            class Tank {
+                static int[2] damages;
+                static void initDamage() {
+                    this.damages[0] := 55;
+                    this.damages[1] := 75;
+                }
+            }
+        """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input,expect,212))
+
+    def test_expressionAW2(self):
+
+        input = """
+            class Tank {
+                int HP = 100;
+                static int[2] damages;
+                static void initDamage() {
+                    this.damages[0] := 55;
+                    this.damages[1] := 75;
+                }
+
+                void attack() {
+                    other.HP := other.HP - Tank.damages[0];
+                }
+            }
+        """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input,expect,212))
