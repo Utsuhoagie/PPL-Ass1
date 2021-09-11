@@ -27,23 +27,28 @@ options{
 // ---- PARSER -----------------------------------
 
 // --- [1] Structure -----------------------------
+
+//cum: IF cum | ;
+
 program         : classDeclList EOF;
 classDeclList   : classDecl classDeclList
                 | classDecl;
-classDecl       : CLASS ID EXTENDS ID LP memberList RP
-                | CLASS ID LP memberList RP
+classDecl       : CLASS ID EXTENDS ID LP (memberList | ) RP
+                | CLASS ID LP (memberList | ) RP;
+/*
                 | CLASS ID EXTENDS ID LP RP
                 | CLASS ID LP RP;
+*/
 
 memberList      : member memberList
                 | member;
-member          : attrKeyword attrType attrList SEMI
-                | attrType attrList SEMI
-                | STATIC returnType method
-                | returnType method;
+member          : (attrKeyword | ) attrType attrList SEMI
+//                | attrType attrList SEMI
+                | (STATIC | ) returnType method;
+//                | returnType method;
 
 attrKeyword     : STATIC FINAL | FINAL STATIC | STATIC | FINAL;
-attrType        : INT | FLOAT | BOOLEAN | STRING | arrayType;
+attrType        : INT | FLOAT | BOOLEAN | STRING | ID | arrayType;  // ID is for class names (e.g Shape s)
 arrayType       : (INT | FLOAT | BOOLEAN | STRING) LQ INTLIT RQ;
 attrList        : attribute COMMA attrList
                 | attribute;
@@ -51,8 +56,8 @@ attribute       : ID INIT exp
                 | ID;
 
 returnType      : INT | FLOAT | BOOLEAN | STRING | VOID;
-method          : ID LB paramList RB blockStmt
-                | ID LB RB blockStmt;
+method          : ID LB (paramList | ) RB blockStmt;
+//                | ID LB RB blockStmt;
 paramList       : param SEMI paramList
                 | param;
 param           : attrType idList;
@@ -61,17 +66,17 @@ idList          : ID COMMA idList
     
 // --- [2] Expressions -------------------------
 
+
+
 exp         : LB exp RB | INTLIT | FLOATLIT | BOOLLIT | STRINGLIT | ARRAYLIT | THIS | ID    // highest priority
-
-            | exp DOT ID LB argList RB  // instance_method_invoke
-            | exp DOT ID LB RB          // instance_method_invoke
-            | ID DOT ID LB argList RB   // static_method_invoke
-            | ID DOT ID LB RB           // static_method_invoke
-            | exp DOT ID                // instance_attr_access
-            | ID DOT ID                 // static_attr_access
+            | obj_create
+            | exp DOT ID LB (argList | ) RB // instance_method_invoke
+            | ID DOT ID LB (argList | )RB   // static_method_invoke
+            | exp DOT ID                    // instance_attr_access
+            | ID DOT ID                     // static_attr_access
 
 
-            | exp LQ exp RQ             // index_op
+            | exp LQ exp RQ                 // index_op
 
             | (ADD | SUB) exp
             | NOT exp
@@ -82,13 +87,12 @@ exp         : LB exp RB | INTLIT | FLOATLIT | BOOLLIT | STRINGLIT | ARRAYLIT | T
             | exp (EQ | NEQ) exp
             | exp (LESS | GREATER | LEQ | GREQ) exp;
 
-
 argList     : exp COMMA argList
             | exp;
 
 
-obj_create  : NEW ID LB argList RB
-            | NEW ID LB RB;
+obj_create  : NEW ID LB (argList | ) RB;
+//            | NEW ID LB RB;
 
 // --- [3] Statements ------------------------
 
@@ -104,15 +108,15 @@ stmt        : blockStmt                 // each stmt's subrule has its own SEMI 
             | methodInvokeStmt;
 
 
-blockStmt   : LP blockBody RP
-            | LP RP;
-blockBody   : declList stmtList
-            | declList
-            | stmtList;
+blockStmt   : LP (blockBody | ) RP;
+            //| LP RP;
+blockBody   : (declList | ) (stmtList | );
+//            | declList
+//            | stmtList;
 declList    : decl declList
             | decl;
-decl        : FINAL attrType attrList SEMI
-            | attrType attrList SEMI;
+decl        : (FINAL | ) attrType attrList SEMI;
+//            | attrType attrList SEMI;
 
 assignStmt  : lhs ASSIGN exp SEMI;
 lhs         : ID
@@ -124,9 +128,9 @@ ifStmt      : IF exp THEN stmt ELSE stmt
             | IF exp THEN stmt;
 
 forStmt     : FOR scalarVar ASSIGN exp (TO | DOWNTO) exp DO stmt;
-scalarVar   : ID
-            | exp DOT ID | ID DOT ID
-            | exp LQ exp RQ;
+scalarVar   : ID                        // local variable
+            | exp DOT ID | ID DOT ID    // instance/static attribute access
+            | exp LQ exp RQ;            // index_op
 
 breakStmt   : BREAK SEMI;
 continueStmt: CONTINUE SEMI;
@@ -134,10 +138,10 @@ continueStmt: CONTINUE SEMI;
 returnStmt  : RETURN exp SEMI
             | RETURN SEMI;
 
-methodInvokeStmt: exp DOT ID LB argList RB SEMI // instance_method_invoke
-                | exp DOT ID LB RB SEMI         // instance_method_invoke
-                | ID DOT ID LB argList RB SEMI  // static_method_invoke
-                | ID DOT ID LB RB SEMI;          // static_method_invoke
+methodInvokeStmt: exp DOT ID LB (argList | ) RB SEMI    // instance_method_invoke
+//                | exp DOT ID LB RB SEMI               // instance_method_invoke
+                | ID DOT ID LB (argList | ) RB SEMI;    // static_method_invoke
+//                | ID DOT ID LB RB SEMI;               // static_method_invoke
 
 // ---- LEXER ------------------------------------
 
@@ -191,8 +195,8 @@ methodInvokeStmt: exp DOT ID LB argList RB SEMI // instance_method_invoke
 	// Array literal
 	ARRAYLIT: LP LITERAL LITLIST RP
             | LP LITERAL RP;
-	LITLIST : COMMA LITERAL LITLIST
-            | COMMA LITERAL;
+	fragment LITLIST : COMMA LITERAL LITLIST
+                     | COMMA LITERAL;
 			
 	fragment LITERAL: INTLIT | FLOATLIT | BOOLLIT | STRINGLIT;
 
