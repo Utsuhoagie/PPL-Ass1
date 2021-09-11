@@ -28,28 +28,20 @@ options{
 
 // --- [1] Structure -----------------------------
 
-//cum: IF cum | ;
-
 program         : classDeclList EOF;
 classDeclList   : classDecl classDeclList
                 | classDecl;
 classDecl       : CLASS ID EXTENDS ID LP (memberList | ) RP
                 | CLASS ID LP (memberList | ) RP;
-/*
-                | CLASS ID EXTENDS ID LP RP
-                | CLASS ID LP RP;
-*/
 
 memberList      : member memberList
                 | member;
-member          : (attrKeyword | ) attrType attrList SEMI
-//                | attrType attrList SEMI
+member          : attrKeyword attrType attrList SEMI
                 | (STATIC | ) returnType method;
-//                | returnType method;
 
-attrKeyword     : STATIC FINAL | FINAL STATIC | STATIC | FINAL;
+attrKeyword     : STATIC FINAL | FINAL STATIC | STATIC | FINAL | ;
 attrType        : INT | FLOAT | BOOLEAN | STRING | ID | arrayType;  // ID is for class names (e.g Shape s)
-arrayType       : (INT | FLOAT | BOOLEAN | STRING) LQ INTLIT RQ;
+arrayType       : (INT | FLOAT | BOOLEAN | STRING | ID) LQ INTLIT RQ;
 attrList        : attribute COMMA attrList
                 | attribute;
 attribute       : ID INIT exp
@@ -57,7 +49,6 @@ attribute       : ID INIT exp
 
 returnType      : INT | FLOAT | BOOLEAN | STRING | VOID;
 method          : ID LB (paramList | ) RB blockStmt;
-//                | ID LB RB blockStmt;
 paramList       : param SEMI paramList
                 | param;
 param           : attrType idList;
@@ -66,18 +57,14 @@ idList          : ID COMMA idList
     
 // --- [2] Expressions -------------------------
 
-
-
 exp         : LB exp RB | INTLIT | FLOATLIT | BOOLLIT | STRINGLIT | ARRAYLIT | THIS | ID    // highest priority
             | obj_create
             | exp DOT ID LB (argList | ) RB // instance_method_invoke
             | ID DOT ID LB (argList | )RB   // static_method_invoke
             | exp DOT ID                    // instance_attr_access
             | ID DOT ID                     // static_attr_access
-
-
             | exp LQ exp RQ                 // index_op
-
+            // arithmetic/bool
             | (ADD | SUB) exp
             | NOT exp
             | exp CONCAT exp
@@ -92,7 +79,6 @@ argList     : exp COMMA argList
 
 
 obj_create  : NEW ID LB (argList | ) RB;
-//            | NEW ID LB RB;
 
 // --- [3] Statements ------------------------
 
@@ -109,14 +95,11 @@ stmt        : blockStmt                 // each stmt's subrule has its own SEMI 
 
 
 blockStmt   : LP (blockBody | ) RP;
-            //| LP RP;
 blockBody   : (declList | ) (stmtList | );
-//            | declList
-//            | stmtList;
+
 declList    : decl declList
             | decl;
 decl        : (FINAL | ) attrType attrList SEMI;
-//            | attrType attrList SEMI;
 
 assignStmt  : lhs ASSIGN exp SEMI;
 lhs         : ID
@@ -139,9 +122,9 @@ returnStmt  : RETURN exp SEMI
             | RETURN SEMI;
 
 methodInvokeStmt: exp DOT ID LB (argList | ) RB SEMI    // instance_method_invoke
-//                | exp DOT ID LB RB SEMI               // instance_method_invoke
                 | ID DOT ID LB (argList | ) RB SEMI;    // static_method_invoke
-//                | ID DOT ID LB RB SEMI;               // static_method_invoke
+
+
 
 // ---- LEXER ------------------------------------
 
@@ -157,8 +140,6 @@ methodInvokeStmt: exp DOT ID LB (argList | ) RB SEMI    // instance_method_invok
     BLOCK_CMT: '/*' .*? '*/' -> skip;
     LINE_CMT: '#' .*? ('\n' | EOF) -> skip;
 
-
-	
 // ------ Literal ------
 // Source representation of an int/float/bool/string value
 		
@@ -187,10 +168,6 @@ methodInvokeStmt: exp DOT ID LB (argList | ) RB SEMI    // instance_method_invok
     STRINGLIT: '"' CHARS* '"'{
         self.text = (str(self.text))[1:-1]
     };
-	/*	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			fragment ESC_SEQ:
-			STRINGLIT:
-    */
 			
 	// Array literal
 	ARRAYLIT: LP LITERAL LITLIST RP
@@ -247,7 +224,6 @@ methodInvokeStmt: exp DOT ID LB (argList | ) RB SEMI    // instance_method_invok
     AND: '&&';
     NOT: '!';
     CONCAT: '^';
-    // object creation: 'new'
 
     ASSIGN: ':=';
     INIT: '=';
@@ -265,9 +241,6 @@ methodInvokeStmt: exp DOT ID LB (argList | ) RB SEMI    // instance_method_invok
 	COMMA: ',';
 
 // ------ Errors ------
-// ERROR_CHAR: .;
-// UNCLOSE_STRING: .;
-// ILLEGAL_ESCAPE: .;
 
 ERROR_CHAR: .{
     raise ErrorToken(self.text)
