@@ -166,7 +166,8 @@ methodInvokeStmt: exp DOT ID LB (argList | ) RB SEMI    // instance_method_invok
 
 
     STRINGLIT: '"' CHARS* '"'{
-        self.text = (str(self.text))[1:-1]
+        # self.text = (str(self.text))[1:-1]
+        pass
     };
 			
 	// Array literal
