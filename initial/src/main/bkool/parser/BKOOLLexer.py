@@ -389,7 +389,8 @@ class BKOOLLexer(Lexer):
     def STRINGLIT_action(self, localctx:RuleContext , actionIndex:int):
         if actionIndex == 0:
 
-                    self.text = (str(self.text))[1:-1]
+                    # self.text = (str(self.text))[1:-1]
+                    pass
                 
      
 
